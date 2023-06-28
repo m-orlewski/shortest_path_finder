@@ -12,12 +12,13 @@ NO_OF_LINES = (6, 10)
 WIDTH = 1000
 
 BACKGROUND_COLORS = [
-    (144, 238, 144),
-    (34, 139, 34),
-    (53, 94, 59),
-    (79, 121, 66),
-    (103, 146, 103),
-    (0, 168, 107)
+    # (144, 238, 144),
+    # (34, 139, 34),
+    # (53, 94, 59),
+    # (79, 121, 66),
+    # (103, 146, 103),
+    # (0, 168, 107)
+    (0, 0, 0),
 ]
 
 BACKGROUND_CIRCLE_MAX_SIZE = 150
@@ -37,7 +38,7 @@ ROAD_COLORS = [
 IMAGE_PATH = 'image_database/'
 
 # Number of images in total
-IMAGE_COUNT = 100
+IMAGE_COUNT = 1
 
 random.seed(SEED)
 
