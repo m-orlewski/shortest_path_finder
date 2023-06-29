@@ -10,18 +10,20 @@ path = 'image_database/0.png'
 ## load and to grayscale
 image = cv2.imread(path)
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-# plt.imshow(image)
-# plt.show()
+plt.imshow(gray, cmap='gray')
+plt.show()
 
-## binarize
-_, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-# plt.imshow(binary, cmap='gray')
-# plt.show()
+# ## binarize
+_, binary = cv2.threshold(image, 175, 255, cv2.THRESH_BINARY)
+# # _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+# binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 0)
+plt.imshow(binary, cmap='gray')
+plt.show()
 
-## skeletonize
+# ## skeletonize
 skeletonized = morphology.skeletonize(binary)
-# plt.imshow(im_skeleton, cmap='gray')
-# plt.show()
+plt.imshow(skeletonized, cmap='gray')
+plt.show()
 
 skeleton = csr.Skeleton(skeletonized)
 
