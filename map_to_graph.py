@@ -1,9 +1,8 @@
-import imageio as iio
 import matplotlib.pyplot as plt
 import cv2
 from skimage import morphology
 from skan import csr
-import numpy as np
+from pathfinder import find_and_draw_path
 
 path = 'image_database/0.png'
 
@@ -28,12 +27,12 @@ plt.show()
 skeleton = csr.Skeleton(skeletonized)
 
 nodes = {} # key: node number, value: (x_coord, y_coord)
-edges = [] # (x, y) - nodes connected
+edges = [] # (x, y, w) - nodes connected + weight
 c = 0
 for i in range(skeleton.n_paths):
     path_coordinates = skeleton.path_coordinates(i)
-    x1, y1 = path_coordinates[0][0], path_coordinates[0][1]
-    x2, y2 = path_coordinates[-1][0], path_coordinates[-1][1]
+    x1, y1 = path_coordinates[0][1], path_coordinates[0][0]
+    x2, y2 = path_coordinates[-1][1], path_coordinates[-1][0]
 
     if (x1, y1) not in nodes.values():
         nodes[c] = (x1, y1)
@@ -48,9 +47,18 @@ for i in range(skeleton.n_paths):
 
     pos1 = val_list.index((x1, y1))
     pos2 = val_list.index((x2, y2))
-
-    edges.append((pos1, pos2))
+    
+    # Every edge has a weight 1.
+    edges.append((pos1, pos2, 1))
 
 print(nodes)
 print()
 print(edges)
+
+# Make ax with plot
+_, ax = plt.subplots()
+ax.imshow(skeletonized, cmap='gray')
+# Get shortest path
+find_and_draw_path(nodes, edges, skeleton, ax, 0, 37, 'test')
+# Show the plot
+plt.show()
