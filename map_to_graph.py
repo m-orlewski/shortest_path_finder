@@ -3,6 +3,7 @@ import cv2
 from skimage import morphology
 from skan import csr
 from pathfinder import find_and_draw_path
+from width_finder import get_path_width
 
 path = 'image_database/0.png'
 
@@ -48,8 +49,8 @@ for i in range(skeleton.n_paths):
     pos1 = val_list.index((x1, y1))
     pos2 = val_list.index((x2, y2))
     
-    # Every edge has a weight 1.
-    edges.append((pos1, pos2, 1))
+    edge_weight = len(path_coordinates) / get_path_width(binary, path_coordinates)
+    edges.append((pos1, pos2, edge_weight))
 
 print(nodes)
 print()
