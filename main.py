@@ -11,10 +11,6 @@ from matplotlib.figure import Figure
 
 import cv2 
 
-import sys
-import os
-
-import functools
 
 import drawer
 import random
@@ -120,7 +116,6 @@ class PageFindPath(tk.Frame):
         self.ax.clear()
         self.ax.imshow(self.image)
         self.ax.set_title(f"Image")
-        self.canvas.draw()
 
         self.axis[0].clear()
         self.axis[0].imshow(self.gray, cmap='gray')
@@ -134,10 +129,40 @@ class PageFindPath(tk.Frame):
         self.axis[2].imshow(self.skeletonized, cmap='gray')
         self.axis[2].set_title("Skeletonized")
 
+        self.nodes = {} # key: node number, value: (x_coord, y_coord)
+        self.edges = [] # (x, y, w) - nodes connected + weight
+        c = 0
+        for i in range(self.skeleton.n_paths):
+            path_coordinates = self.skeleton.path_coordinates(i)
+            x1, y1 = path_coordinates[0][1], path_coordinates[0][0]
+            x2, y2 = path_coordinates[-1][1], path_coordinates[-1][0]
+
+            if (x1, y1) not in self.nodes.values():
+                self.nodes[c] = (x1, y1)
+                c += 1
+
+            if (x2, y2) not in self.nodes.values():
+                self.nodes[c] = (x2, y2)
+                c += 1
+
+            key_list = list(self.nodes.keys())
+            val_list = list(self.nodes.values())
+
+            pos1 = val_list.index((x1, y1))
+            pos2 = val_list.index((x2, y2))
+            
+            edge_weight = len(path_coordinates) / get_path_width(self.binary, path_coordinates)
+            self.edges.append((pos1, pos2, edge_weight))
+
+        self.numbered = self.skeletonized.copy()
+        for i, coordinates in enumerate(list(self.nodes.values())):
+            cv2.putText(self.numbered, f"{i}", coordinates, cv2.FONT_HERSHEY_SIMPLEX, 1, (255,0,0), 1, cv2.LINE_AA)
+
         self.axis[3].clear()
-        self.axis[3].imshow(self.skeletonized, cmap='gray')
+        self.axis[3].imshow(self.numbered)
         self.axis[3].set_title("Nodes numbers")
         self.canvas2.draw()
+        self.canvas.draw()
 
     def set_start(self):
         self.start = tk.simpledialog.askinteger("New start point", "Enter number associated with start point:")
@@ -146,32 +171,7 @@ class PageFindPath(tk.Frame):
         self.destination = tk.simpledialog.askinteger("New destination point", "Enter number associated with destination point:")
 
     def find_path(self):
-        nodes = {} # key: node number, value: (x_coord, y_coord)
-        edges = [] # (x, y, w) - nodes connected + weight
-        c = 0
-        for i in range(self.skeleton.n_paths):
-            path_coordinates = self.skeleton.path_coordinates(i)
-            x1, y1 = path_coordinates[0][1], path_coordinates[0][0]
-            x2, y2 = path_coordinates[-1][1], path_coordinates[-1][0]
-
-            if (x1, y1) not in nodes.values():
-                nodes[c] = (x1, y1)
-                c += 1
-
-            if (x2, y2) not in nodes.values():
-                nodes[c] = (x2, y2)
-                c += 1
-
-            key_list = list(nodes.keys())
-            val_list = list(nodes.values())
-
-            pos1 = val_list.index((x1, y1))
-            pos2 = val_list.index((x2, y2))
-            
-            edge_weight = len(path_coordinates) / get_path_width(self.binary, path_coordinates)
-            edges.append((pos1, pos2, edge_weight))
-
-        find_and_draw_path(nodes, edges, self.skeleton, self.ax, 0, 37, 'test')
+        find_and_draw_path(self.nodes, self.edges, self.skeleton, self.ax, self.start, self.destination, 'test')
         self.canvas.draw()
 
 class PageGenerateImage(tk.Frame):
