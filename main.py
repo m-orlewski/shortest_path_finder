@@ -156,7 +156,7 @@ class PageFindPath(tk.Frame):
 
         self.numbered = self.skeletonized.copy()
         for i, coordinates in enumerate(list(self.nodes.values())):
-            cv2.putText(self.numbered, f"{i}", coordinates, cv2.FONT_HERSHEY_SIMPLEX, 3, (255,0,0), 1, cv2.LINE_AA)
+            cv2.putText(self.numbered, f"{i}", coordinates, cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 1, cv2.LINE_AA)
 
         self.axis[3].clear()
         self.axis[3].imshow(self.numbered)
