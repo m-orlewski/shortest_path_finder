@@ -106,7 +106,7 @@ def draw_line(img, line):
 
 
 # Creates and saves a complete image
-def create_single_image(name):
+def create_single_image(name=""):
     # Initialize empty image
     image = np.zeros((WIDTH, WIDTH, 3), np.uint8)
 
@@ -120,10 +120,13 @@ def create_single_image(name):
         for line in lines:
             image = draw_line(image, line)
 
+    if name == "":
+        return image 
     # Posprocess and save
     # image = cv2.blur(image, (2, 2))
-    print(f'{IMAGE_PATH}{name}.png')
-    cv2.imwrite(f'{IMAGE_PATH}{name}.png', image)
+    else:
+        print(f'{IMAGE_PATH}{name}.png')
+        cv2.imwrite(f'{IMAGE_PATH}{name}.png', image)
 
 
 if __name__ == "__main__":
